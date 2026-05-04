@@ -11,8 +11,6 @@ app = Flask(__name__)
 model   = pickle.load(open("model.pkl", "rb"))
 columns = pickle.load(open("columns.pkl", "rb"))
 
-with open("location_stats.json") as f:
-    location_stats = json.load(f)
 
 locations = sorted([
     col.replace("location_", "")
