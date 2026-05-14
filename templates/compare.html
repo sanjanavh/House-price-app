@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compare Prices</title>
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'DM Sans', sans-serif;
+    background: #0d0f1a;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+}
+
+.card {
+    width: 100%;
+    max-width: 1100px;
+    background: #12151f;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid #1e2235;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+}
+
+.header {
+    background: #0f1117;
+    padding: 24px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border-bottom: 1px solid #1e2235;
+}
+
+.header-icon {
+    width: 46px;
+    height: 46px;
+    background: rgba(230,192,109,0.1);
+    border: 1.5px solid rgba(230,192,109,0.3);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+}
+
+.header-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: #f0f0f0;
+}
+
+.header-subtitle {
+    font-size: 13px;
+    color: #5a5f7a;
+    margin-top: 2px;
+}
+
+.back-link {
+    margin-left: auto;
+    text-decoration: none;
+    background: #e8c06d;
+    color: #0d0f1a;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: opacity 0.15s;
+}
+
+.back-link:hover {
+    opacity: 0.9;
+}
+
+.body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.form-side {
+    padding: 28px 32px;
+    border-right: 1px solid #1e2235;
+}
+
+.result-side {
+    padding: 28px 32px;
+    background: #0f1117;
+}
+
+.field {
+    margin-bottom: 18px;
+}
+
+.field-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: #5a5f7a;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    display: block;
+    margin-bottom: 7px;
+}
+
+.field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+input, select {
+    width: 100%;
+    padding: 10px 13px;
+    border: 1px solid #1e2235;
+    border-radius: 10px;
+    background: #0d0f1a;
+    color: #e0e0e0;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+}
+
+input:focus, select:focus {
+    border-color: #4a5eff;
+    box-shadow: 0 0 0 3px rgba(74,94,255,0.15);
+}
+
+input::placeholder {
+    color: #5a5f7a;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 12px;
+    background: #e8c06d;
+    border: none;
+    border-radius: 10px;
+    color: #0d0f1a;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 6px;
+}
+
+.submit-btn:hover {
+    opacity: 0.9;
+}
+
+.result-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: #5a5f7a;
+    margin-bottom: 14px;
+}
+
+.idle-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    color: #3a3f55;
+    gap: 12px;
+}
+
+.idle-icon {
+    font-size: 36px;
+    opacity: 0.4;
+}
+
+.idle-text {
+    font-size: 13px;
+    line-height: 1.6;
+    max-width: 220px;
+}
+
+.error-box {
+    background: rgba(220,53,69,0.1);
+    border: 1px solid rgba(220,53,69,0.3);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 13px;
+    color: #ff7b7b;
+    margin-top: 8px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+}
+
+th, td {
+    padding: 10px 8px;
+    border-top: 1px solid #1e2235;
+}
+
+th {
+    color: #5a5f7a;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+td {
+    color: #e0e0e0;
+}
+
+.value-cell {
+    color: #e8c06d;
+    font-weight: 500;
+    text-align: right;
+}
+
+.chart-img {
+    width: 100%;
+    margin-top: 20px;
+    border-radius: 12px;
+    background: #12151f;
+}
+
+@media (max-width: 768px) {
+    .body {
+        grid-template-columns: 1fr;
+    }
+
+    .form-side {
+        border-right: none;
+        border-bottom: 1px solid #1e2235;
+    }
+
+    .field-row {
+        grid-template-columns: 1fr;
+    }
+
+    .header {
+        flex-wrap: wrap;
+    }
+
+    .back-link {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+    <div class="header">
+        <div class="header-icon">📈</div>
+        <div>
+            <div class="header-title">Price Comparison</div>
+            <div class="header-subtitle">
+                Compare property prices across Bengaluru localities
+            </div>
+        </div>
+
+        <a href="/" class="back-link">← Back to Predictor</a>
+    </div>
+
+    <div class="body">
+        <!-- LEFT SIDE -->
+        <div class="form-side">
+            <form action="/compare" method="post">
+
+                <div class="field">
+                    <label class="field-label">Prediction Type</label>
+                    <select name="compare_prediction_type">
+                        <option value="buy"
+                            {% if request.form.get('compare_prediction_type', 'buy') == 'buy' %}selected{% endif %}>
+                            Purchase Price
+                        </option>
+                        <option value="rent"
+                            {% if request.form.get('compare_prediction_type') == 'rent' %}selected{% endif %}>
+                            Monthly Rent
+                        </option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label class="field-label">Area (sq ft)</label>
+                    <input
+                        type="number"
+                        name="compare_sqft"
+                        required
+                        value="{{ request.form.get('compare_sqft', '') }}"
+                    >
+                </div>
+
+                <div class="field">
+                    <div class="field-row">
+                        <div>
+                            <label class="field-label">BHK</label>
+                            <input
+                                type="number"
+                                name="compare_bhk"
+                                required
+                                value="{{ request.form.get('compare_bhk', '') }}"
+                            >
+                        </div>
+                        <div>
+                            <label class="field-label">Bathrooms</label>
+                            <input
+                                type="number"
+                                name="compare_bath"
+                                required
+                                value="{{ request.form.get('compare_bath', '') }}"
+                            >
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="field-label">Location 1</label>
+                    <input
+                        type="text"
+                        name="location1"
+                        list="locations-list"
+                        placeholder="Type first location"
+                        required
+                        autocomplete="off"
+                        value="{{ request.form.get('location1', '') }}"
+                    >
+                </div>
+
+                <div class="field">
+                    <label class="field-label">Location 2</label>
+                    <input
+                        type="text"
+                        name="location2"
+                        list="locations-list"
+                        placeholder="Type second location"
+                        required
+                        autocomplete="off"
+                        value="{{ request.form.get('location2', '') }}"
+                    >
+                </div>
+
+                <div class="field">
+                    <label class="field-label">Location 3 (Optional)</label>
+                    <input
+                        type="text"
+                        name="location3"
+                        list="locations-list"
+                        placeholder="Type third location (optional)"
+                        autocomplete="off"
+                        value="{{ request.form.get('location3', '') }}"
+                    >
+                </div>
+
+                <div class="field">
+                    <label class="field-label">Location 4 (Optional)</label>
+                    <input
+                        type="text"
+                        name="location4"
+                        list="locations-list"
+                        placeholder="Type fourth location (optional)"
+                        autocomplete="off"
+                        value="{{ request.form.get('location4', '') }}"
+                    >
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    Compare Prices →
+                </button>
+            </form>
+
+            {% if error %}
+            <div class="error-box">⚠ {{ error }}</div>
+            {% endif %}
+        </div>
+
+        <!-- RIGHT SIDE -->
+        <div class="result-side">
+            <div class="result-label">Comparison Results</div>
+
+            {% if comparison_results %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th align="left">Location</th>
+                            <th align="right">Predicted Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in comparison_results %}
+                        <tr>
+                            <td>{{ row.location }}</td>
+                            <td class="value-cell">
+                                {% if compare_prediction_type == 'rent' %}
+                                    ₹ {{ "{:,.0f}".format(row.value) }}/month
+                                {% else %}
+                                    ₹ {{ row.value }} L
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <img
+                    src="{{ url_for('static', filename='plot.png') }}"
+                    alt="Comparison Graph"
+                    class="chart-img">
+            {% else %}
+                <div class="idle-state">
+                    <div class="idle-icon">📊</div>
+                    <p class="idle-text">
+                        Type at least two locations and click Compare Prices
+                        to visualize the results.
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Shared datalist for autocomplete -->
+<datalist id="locations-list">
+    {% for loc in locations %}
+    <option value="{{ loc }}">
+    {% endfor %}
+</datalist>
+
+</body>
+</html>
